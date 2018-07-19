@@ -1,0 +1,7 @@
+This app takes a csv file with the names of geographic locations or demographic
+groups, the sq milage and population estimates respectively, and allows
+the user to compare them.
+
+Use cases:
+- I want to know what US state Kern County is closest to in size. The answer is South Dakota.
+- I want to know what US state Los Angeles County is closest to in population. The answer is Michigan.
