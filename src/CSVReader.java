@@ -13,6 +13,7 @@ public class CSVReader {
     private String[] names;
     private int[] population;
     private double[] area;
+    String firstLine;
 
     /**
      * Returns a File object and a Scanner object
@@ -30,33 +31,41 @@ public class CSVReader {
                 String[] tokens = line.split(",");
                 numRows++;
             }
+
             input = new Scanner(infile);
             names = new String[numRows];
             population = new int[numRows];
             area = new double[numRows];
+            int nameIndex = 0;
+            int areaIndex = 1;
+            int popIndex = 2;
 
-            int row = 0;
+            int index = 0;
             while (input.hasNextLine()) {
                 String line = input.nextLine();
                 String[] tokens = line.split(",", -1);
 
 //                String[] tokens = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-                if (! tokens[0].contains("County_Comparator")) {
-                    names[row] = tokens[0];
+                if (! tokens[0].contains("County_or_Comparison")) {
+                    names[index] = tokens[nameIndex];
                     try {
-                        area[row] = Double.parseDouble(tokens[1]);
+                        area[index] = Double.parseDouble(tokens[areaIndex]);
                     }
                     catch (NumberFormatException a){
-                        area[row] = 0;
+                        area[index] = 0;
                     }
                     try {
-                        population[row] = Integer.parseInt(tokens[2]);
+                        population[index] = Integer.parseInt(tokens[popIndex]);
                     }
                     catch (NumberFormatException a) {
-                        population[row] = 0;
+                        population[index] = 0;
                     }
                 }
-                row++;
+                else{
+                    firstLine = line;
+                }
+
+                index++;
             }
             input.close();
         }
@@ -86,10 +95,19 @@ public class CSVReader {
      */
     public double[] getArea(){ return area; }
 
+//    public String toString() {
+//        String returnStr = "Name, Population, Area (Sq Miles) \n";
+//        for(int i = 0; i < names.length; i++){
+//            returnStr +=  names[i] + ", " + population[i] + "," + area[i] + "\n";
+//        }
+//        return returnStr;
+//    }
+
     public String toString() {
-        String returnStr = "Name \t \t Population \t \t Area (Sq Miles) + \n";
-        for(int i = 0; i < names.length; i++){
-            returnStr +=  names[i] + ", \t" + population[i] + ",\t" + area[i] + "\n";
+        String[] tokens = firstLine.split(",", -1);
+        String returnStr = String.format("%1$-55s %2$-15s %3$-15s \n", tokens[0], tokens[1], tokens[2]);
+        for(int i = 1; i < names.length; i++){
+            returnStr +=  String.format("%1$-55s %2$-15s %3$-15s \n", names[i], area[i], population[i]);
         }
         return returnStr;
     }
