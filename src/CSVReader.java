@@ -7,12 +7,12 @@ import static java.lang.System.out;
 
 /**
  *  This class reads input from a CSV file.
- * @author Foothill College, Jessica Dickinson Goodman
+ * @author Jessica Dickinson Goodman
  */
 public class CSVReader {
-    private String[] countryNames;
-    private int[] yearLabels;
-    private double[][] CellularDataTable;
+    private String[] names;
+    private int[] population;
+    private double[] area;
 
     /**
      * Returns a File object and a Scanner object
@@ -23,40 +23,40 @@ public class CSVReader {
         try {
             File infile = new File(filename);
             input = new Scanner(infile);
-            int numRows = -3;
-            int numCols = 0;
+            int numRows = 0;
 
             while (input.hasNextLine()) {
                 String line = input.nextLine();
                 String[] tokens = line.split(",");
-                if (tokens.length > numCols)
-                    numCols = tokens.length;
                 numRows++;
             }
             input = new Scanner(infile);
-            countryNames = new String[numRows];
-            yearLabels = new int[numCols];
-            CellularDataTable = new double[numRows][numCols];
+            names = new String[numRows];
+            population = new int[numRows];
+            area = new double[numRows];
 
-            int count = 0;
-            int countryCounter = 0;
-
+            int row = 0;
             while (input.hasNextLine()) {
                 String line = input.nextLine();
-                String[] tokens = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-                if(tokens[0].contains("World Development Indicators") || tokens[0].contains("Number of countries")){ continue; }
-                else if (tokens[0].contains("Country Name")) {
-                    for (int i = 1; i < tokens.length; i++) {
-                        yearLabels[i - 1] = Integer.parseInt(tokens[i]);
+                String[] tokens = line.split(",", -1);
+
+//                String[] tokens = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+                if (! tokens[0].contains("County_Comparator")) {
+                    names[row] = tokens[0];
+                    try {
+                        area[row] = Double.parseDouble(tokens[1]);
+                    }
+                    catch (NumberFormatException a){
+                        area[row] = 0;
+                    }
+                    try {
+                        population[row] = Integer.parseInt(tokens[2]);
+                    }
+                    catch (NumberFormatException a) {
+                        population[row] = 0;
                     }
                 }
-                else {
-                    countryNames[countryCounter] = tokens[0];
-                    for (int i = 1; i < tokens.length; i++){
-                        CellularDataTable[countryCounter][i - 1] = Double.parseDouble(tokens[i]);
-                    }
-                    countryCounter ++;
-                }
+                row++;
             }
             input.close();
         }
@@ -69,29 +69,28 @@ public class CSVReader {
     }
 
     /**
-     * This accessor method returns countryNames
-     * @return a string array countryNames[]
+     * This accessor method returns names
+     * @return a string array names[]
      */
-    public String[] getCountryNames(){ return countryNames; }
+    public String[] getNames(){ return names; }
 
     /**
-     * This accessor method returns yearLabels
-     * @return an int array yearLabels
+     * This accessor method returns population
+     * @return an int array population
      */
-    public int[] getYearLabels(){ return yearLabels; }
+    public int[] getPopulation(){ return population; }
 
     /**
-     * This accessor method returns CellularDataTable
+     * This accessor method returns area
      * @return a two dimensional array of doubles getCellularDataTable
      */
-    public double[][] getParsedTable(){ return CellularDataTable; }
+    public double[] getArea(){ return area; }
 
-    /**
-     * This accessor method returns the number of columns minus one using the
-     * length of the last row in the table
-     * @return an int of the number of years covered in the file
-     */
-    public int getNumberOfYears(){
-        return CellularDataTable[CellularDataTable.length - 1].length;
+    public String toString() {
+        String returnStr = "Name \t \t Population \t \t Area (Sq Miles) + \n";
+        for(int i = 0; i < names.length; i++){
+            returnStr +=  names[i] + ", \t" + population[i] + ",\t" + area[i] + "\n";
+        }
+        return returnStr;
     }
 }
