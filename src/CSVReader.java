@@ -13,7 +13,7 @@ public class CSVReader {
     private String[] names;
     private int[] population;
     private double[] area;
-    String firstLine;
+    String header;
 
     /**
      * Returns a File object and a Scanner object
@@ -62,7 +62,7 @@ public class CSVReader {
                     }
                 }
                 else{
-                    firstLine = line;
+                    header = line;
                 }
 
                 index++;
@@ -95,16 +95,12 @@ public class CSVReader {
      */
     public double[] getArea(){ return area; }
 
-//    public String toString() {
-//        String returnStr = "Name, Population, Area (Sq Miles) \n";
-//        for(int i = 0; i < names.length; i++){
-//            returnStr +=  names[i] + ", " + population[i] + "," + area[i] + "\n";
-//        }
-//        return returnStr;
-//    }
-
+    /**
+     * This is the toString, it returns a formatted string version of the csv file
+     * @return      String
+     */
     public String toString() {
-        String[] tokens = firstLine.split(",", -1);
+        String[] tokens = header.split(",", -1);
         String returnStr = String.format("%1$-55s %2$-15s %3$-15s \n", tokens[0], tokens[1], tokens[2]);
         for(int i = 1; i < names.length; i++){
             returnStr +=  String.format("%1$-55s %2$-15s %3$-15s \n", names[i], area[i], population[i]);
